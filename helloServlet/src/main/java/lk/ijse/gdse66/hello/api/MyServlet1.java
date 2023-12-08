@@ -11,11 +11,6 @@ import java.io.IOException;
 public class MyServlet1 extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        /*System.out.println("MyServlet1");
-        ServletConfig sc = getServletConfig();
-        String city = sc.getInitParameter("city");
-        System.out.println(city);*/
-
         ServletContext servletContext = getServletContext();
         String username = servletContext.getInitParameter("username");
         System.out.println(username);
