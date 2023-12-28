@@ -9,18 +9,19 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-@WebServlet(name = "MyServlet", value = "/MyServlet", loadOnStartup = 1, initParams = {
+@WebServlet(name = "Customer", urlPatterns = "/customers", loadOnStartup = 1, initParams = {
         @WebInitParam(name = "username" , value = "root"),
         @WebInitParam(name = "password" , value = "MYsql@123@"),
         @WebInitParam(name = "url" , value = "jdbc:mysql://localhost:3306/gdse66_hello")
 })
-public class MyServlet extends HttpServlet {
+public class CustomerServlet extends HttpServlet {
     private String username;
     private String password;
     private String url;
 
     @Override
     public void init() throws ServletException {
+        /*ServletConfig is used to get configuration information such as database url, mysql username and password*/
         ServletConfig sc = getServletConfig();
         username = sc.getInitParameter("username");
         password = sc.getInitParameter("password");
@@ -30,12 +31,15 @@ public class MyServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
+
+        /*catch request parameter as a String*/
         String id = req.getParameter("id");
         String name = req.getParameter("name");
         String address = req.getParameter("address");
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
 
+        /*create a database connection and save data in database*/
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url,username,password);
@@ -58,6 +62,4 @@ public class MyServlet extends HttpServlet {
             }
         }
     }
-
-
 }
