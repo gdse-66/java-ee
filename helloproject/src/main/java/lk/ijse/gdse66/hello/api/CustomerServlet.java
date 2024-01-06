@@ -1,13 +1,13 @@
 package lk.ijse.gdse66.hello.api;
 
+import com.mysql.cj.xdevapi.JsonArray;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.io.PrintWriter;
+import java.sql.*;
 
 @WebServlet(name = "Customer", urlPatterns = "/customers", loadOnStartup = 1, initParams = {
         @WebInitParam(name = "username" , value = "root"),
@@ -30,49 +30,68 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("doPost()");
+        Connection connection = null;
 
-        // data should be sent as Query string or application/x-www-form-urlencoded to fetch using this way
+        /*catch request parameter as a String*/
         String id = req.getParameter("id");
         String name = req.getParameter("name");
         String address = req.getParameter("address");
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
+
+        /*create a database connection and save data in database*/
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url,username,password);
+            PreparedStatement stm = connection.prepareStatement("INSERT INTO customer(id, name, address) VALUES (?,?,?)");
+
+            stm.setString(1,id);
+            stm.setString(2, name);
+            stm.setString(3, address);
+
+            stm.executeUpdate();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }finally {
+            if(connection !=null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("doGet()");
+        Connection connection = null;
 
-        // data should be sent as Query string to fetch using this way
-        String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
+        /*create a database connection and fetch data in database*/
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url,username,password);
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM customer");
+            ResultSet rst = stm.executeQuery();
 
-        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
+            while (rst.next()){
+                String id = rst.getString("id");
+                String name = rst.getString("name");
+                String address = rst.getString("address");
+                System.out.printf("id=%s, name=%s, address=%s\n",id,name,address);
+            }
+
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }finally {
+            if(connection !=null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("doDelete()");
-
-        // data should be sent as Query string to fetch using this way
-        String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
-
-        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("doPut()");
-
-        // data should be sent as Query string to fetch using this way
-        String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
-
-        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
-    }
 }
