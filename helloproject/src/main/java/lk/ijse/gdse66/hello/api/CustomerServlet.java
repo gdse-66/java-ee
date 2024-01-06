@@ -30,36 +30,31 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Connection connection = null;
+        System.out.println("doPost()");
 
-        /*catch request parameter as a String*/
-        String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
+        /*
+         * catch form data when they are submitted as <form action="customers" method="post" enctype="application/x-www-form-urlencoded">
+         * data is sent through body (application/x-www-form-urlencoded)
+         */
+        String id = req.getParameter("CusId");
+        String name = req.getParameter("CusName");
+        String address = req.getParameter("CusAddress");
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
+    }
 
-        /*create a database connection and save data in database*/
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(url,username,password);
-            PreparedStatement stm = connection.prepareStatement("INSERT INTO customer(id, name, address) VALUES (?,?,?)");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("doGet()");
 
-            stm.setString(1,id);
-            stm.setString(2, name);
-            stm.setString(3, address);
+        /*
+         * catch form data when they are submitted as <form action="customers" method="get">
+         * data is sent as Query string
+         */
+        String id = req.getParameter("CusId");
+        String name = req.getParameter("CusName");
+        String address = req.getParameter("CusAddress");
 
-            stm.executeUpdate();
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException(e);
-        }finally {
-            if(connection !=null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
     }
 }
