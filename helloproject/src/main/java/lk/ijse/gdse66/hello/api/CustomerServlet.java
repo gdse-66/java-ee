@@ -1,6 +1,6 @@
 package lk.ijse.gdse66.hello.api;
 
-import com.mysql.cj.xdevapi.JsonArray;
+import jakarta.json.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -32,10 +32,16 @@ public class CustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
 
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+        String id = jsonObject.getString("id");
+        String name = jsonObject.getString("name");
+        String address = jsonObject.getString("address");
+
         /*catch request parameter as a String*/
-        String id = req.getParameter("id");
+        /*String id = req.getParameter("id");
         String name = req.getParameter("name");
-        String address = req.getParameter("address");
+        String address = req.getParameter("address");*/
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
 
@@ -74,7 +80,9 @@ public class CustomerServlet extends HttpServlet {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM customer");
             ResultSet rst = stm.executeQuery();
 
-            String jsonArray = "";
+            /*String jsonArray = "";*/
+
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
             while (rst.next()){
                 String id = rst.getString("id");
@@ -86,13 +94,26 @@ public class CustomerServlet extends HttpServlet {
                 writer.write(customer); // write all customers as the text in response*/
 
                 /*Example for Json object format: {"id":C001, "name":Kasun, "address":Galle}*/
-                String jsonObject = "{ \"id\": \"" + id + "\"," + "\"name\":\""+ name+ "\"," + "\"address\":\"" + address + "\"}"; //convert one customer record to JSON object format
-                jsonArray += jsonObject + ",";
+                /*String jsonObject = "{ \"id\": \"" + id + "\"," + "\"name\":\""+ name+ "\"," + "\"address\":\"" + address + "\"}"; //convert one customer record to JSON object format
+                jsonArray += jsonObject + ",";*/
+
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("id",id);
+                objectBuilder.add("name",name);
+                objectBuilder.add("address",address);
+                JsonObject customerJsonObject = objectBuilder.build(); //create JSON objects for each customer
+
+
+                arrayBuilder.add(customerJsonObject); // add each customer into JSON array
             }
 
-            jsonArray = "[" + jsonArray.substring(0,jsonArray.length()-1) + "]"; //create JSON array format to add all customers
+            /*jsonArray = "[" + jsonArray.substring(0,jsonArray.length()-1) + "]"; //create JSON array format to add all customers
 
-            resp.getWriter().write(jsonArray); //write JSON array format in response
+            resp.getWriter().write(jsonArray); //write JSON array format in response*/
+
+            JsonArray jsonArray = arrayBuilder.build();
+            resp.getWriter().write(jsonArray.toString()); //write JSON array in response
+
             resp.setContentType("application/json"); //set the MIME type of the content of the response (Thus, add response header called "Content-Type")
 
         } catch (ClassNotFoundException | SQLException e) {
