@@ -32,13 +32,10 @@ public class CustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("doPost()");
 
-        /*
-         * catch form data when they are submitted as <form action="customers" method="post" enctype="application/x-www-form-urlencoded">
-         * data is sent through body (application/x-www-form-urlencoded)
-         */
-        String id = req.getParameter("CusId");
-        String name = req.getParameter("CusName");
-        String address = req.getParameter("CusAddress");
+        // data should be sent as Query string or application/x-www-form-urlencoded to fetch using this way
+        String id = req.getParameter("id");
+        String name = req.getParameter("name");
+        String address = req.getParameter("address");
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
     }
@@ -47,13 +44,34 @@ public class CustomerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("doGet()");
 
-        /*
-         * catch form data when they are submitted as <form action="customers" method="get">
-         * data is sent as Query string
-         */
-        String id = req.getParameter("CusId");
-        String name = req.getParameter("CusName");
-        String address = req.getParameter("CusAddress");
+        // data should be sent as Query string to fetch using this way
+        String id = req.getParameter("id");
+        String name = req.getParameter("name");
+        String address = req.getParameter("address");
+
+        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("doDelete()");
+
+        // data should be sent as Query string to fetch using this way
+        String id = req.getParameter("id");
+        String name = req.getParameter("name");
+        String address = req.getParameter("address");
+
+        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("doPut()");
+
+        // data should be sent as Query string to fetch using this way
+        String id = req.getParameter("id");
+        String name = req.getParameter("name");
+        String address = req.getParameter("address");
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
     }
