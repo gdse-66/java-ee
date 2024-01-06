@@ -74,12 +74,26 @@ public class CustomerServlet extends HttpServlet {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM customer");
             ResultSet rst = stm.executeQuery();
 
+            String jsonArray = "";
+
             while (rst.next()){
                 String id = rst.getString("id");
                 String name = rst.getString("name");
                 String address = rst.getString("address");
                 System.out.printf("id=%s, name=%s, address=%s\n",id,name,address);
+
+                /*String customer = String.format("id=%s, name=%s, address=%s\n", id, name, address);
+                writer.write(customer); // write all customers as the text in response*/
+
+                /*Example for Json object format: {"id":C001, "name":Kasun, "address":Galle}*/
+                String jsonObject = "{ \"id\": \"" + id + "\"," + "\"name\":\""+ name+ "\"," + "\"address\":\"" + address + "\"}"; //convert one customer record to JSON object format
+                jsonArray += jsonObject + ",";
             }
+
+            jsonArray = "[" + jsonArray.substring(0,jsonArray.length()-1) + "]"; //create JSON array format to add all customers
+
+            resp.getWriter().write(jsonArray); //write JSON array format in response
+            resp.setContentType("application/json"); //set the MIME type of the content of the response (Thus, add response header called "Content-Type")
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
