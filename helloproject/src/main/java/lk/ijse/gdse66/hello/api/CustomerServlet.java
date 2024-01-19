@@ -34,6 +34,8 @@ public class CustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
 
+        /*resp.addHeader("Access-Control-Allow-Origin", "*");*/
+
         Jsonb jsonb = JsonbBuilder.create();
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
         String id = customerDTO.getId();
@@ -95,6 +97,7 @@ public class CustomerServlet extends HttpServlet {
             getCustomerById();
         }*/
 
+        resp.addHeader("Access-Control-Allow-Origin","*");
 
         Connection connection = null;
 
