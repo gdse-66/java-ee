@@ -45,11 +45,71 @@ $('#btnSave').click(function () {
         url: "http://localhost:8080/app/customers",
         method: "POST",
         data: jsonObj,
-        success: function (resp) {
+        contentType: "application/json",
+        success: function (resp, textStatus, jqxhr) {
             console.log("success: ", resp);
+            console.log("success: ", textStatus);
+            console.log("success: ", jqxhr);
+            /*if(jqxhr.status == 201)
+                alert("Added customer successfully")*/
+            if (jqxhr.status == 201)
+                alert(jqxhr.responseText);
         },
-        error: function (error) {
+        error: function (jqxhr, textStatus, error) {
+            console.log("error: ", jqxhr);
+            console.log("error: ", textStatus);
             console.log("error: ", error);
         }
     })
 });
+
+$('#btnDelete').click(function () {
+    const id = $('#txt-id').val();
+
+    $.ajax({
+        url: "http://localhost:8080/app/customers?id=" + id,
+        method: "DELETE",
+        success: function (resp, textStatus, jqxhr) {
+            console.log("success: ", resp);
+            console.log("success: ", textStatus);
+            console.log("success: ", jqxhr);
+        },
+        error: function (jqxhr, textStatus, error) {
+            console.log("error: ", jqxhr);
+            console.log("error: ", textStatus);
+            console.log("error: ", error);
+        }
+    })
+});
+
+$('#btnUpdate').click(function () {
+    const id = $('#txt-id').val();
+    const name = $('#txt-name').val();
+    const address = $('#txt-address').val();
+
+    const customerObj = {
+        id:id,
+        name:name,
+        address:address
+    };
+
+    const jsonObj = JSON.stringify(customerObj);
+
+    $.ajax({
+        url: "http://localhost:8080/app/customers",
+        method: "PUT",
+        data: jsonObj,
+        contentType: "application/json",
+        success: function (resp, textStatus, jqxhr) {
+            console.log("success: ", resp);
+            console.log("success: ", textStatus);
+            console.log("success: ", jqxhr);
+        },
+        error: function (jqxhr, textStatus, error) {
+            console.log("error: ", jqxhr);
+            console.log("error: ", textStatus);
+            console.log("error: ", error);
+        }
+    })
+});
+
